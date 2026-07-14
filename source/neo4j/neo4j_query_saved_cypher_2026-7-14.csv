@@ -1,7 +1,7 @@
 name,description,query,id,parentId,isFolder
 Aggregation,,"PROFILE
 MATCH (a:Author)-[:WROTE]->(p:Paper)-[:BELONGS_TO]->(c:Category)
-WHERE p.year >= 2018 AND p.year <= 2023
+WHERE p.year >= 2014 AND p.year <= 2023
 RETURN DISTINCT a.name AS Author, COUNT(p) AS NumberOfPublications
 ORDER BY NumberOfPublications DESC
 LIMIT 15;",0,,false
