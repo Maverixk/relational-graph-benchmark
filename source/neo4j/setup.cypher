@@ -21,6 +21,7 @@ FOR (c:Category) REQUIRE c.name IS NODE KEY;
 :auto LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/Maverixk/relational-graph-benchmark/main/dataset/papers.csv' AS row
 CALL {
     WITH row
+    WITH row WHERE row.paper_id IS NOT NULL
     CREATE (:Paper {
         id: row.paper_id,
         title: row.title,
@@ -32,6 +33,7 @@ CALL {
 :auto LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/Maverixk/relational-graph-benchmark/main/dataset/authors.csv' AS row
 CALL {
     WITH row
+    WITH row WHERE row.author_id IS NOT NULL
     CREATE (:Author {
         id: row.author_id,
         name: row.name
@@ -42,6 +44,7 @@ CALL {
 :auto LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/Maverixk/relational-graph-benchmark/main/dataset/paper_categories.csv' AS row
 CALL {
     WITH row
+    WITH row WHERE row.category IS NOT NULL
     MERGE (:Category {name: row.category})
 } IN TRANSACTIONS OF 5000 ROWS;
 
@@ -53,6 +56,7 @@ CALL {
 :auto LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/Maverixk/relational-graph-benchmark/main/dataset/wrote.csv' AS row
 CALL {
     WITH row
+    WITH row WHERE row.author_id IS NOT NULL AND row.paper_id IS NOT NULL
     MATCH (a:Author {id: row.author_id})
     MATCH (p:Paper {id: row.paper_id})
     CREATE (a)-[:WROTE]->(p)
@@ -62,6 +66,7 @@ CALL {
 :auto LOAD CSV WITH HEADERS FROM 'https://raw.githubusercontent.com/Maverixk/relational-graph-benchmark/main/dataset/paper_categories.csv' AS row
 CALL {
     WITH row
+    WITH row WHERE row.category IS NOT NULL
     MATCH (p:Paper {id: row.paper_id})
     MATCH (c:Category {name: row.category})
     CREATE (p)-[:BELONGS_TO]->(c)
