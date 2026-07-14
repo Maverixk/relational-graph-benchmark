@@ -1,0 +1,19 @@
+name,description,query,id,parentId,isFolder
+Aggregation,,"PROFILE
+MATCH (a:Author)-[:WROTE]->(p:Paper)-[:BELONGS_TO]->(c:Category)
+WHERE p.year >= 2018 AND p.year <= 2023
+RETURN DISTINCT a.name AS Author, COUNT(p) AS NumberOfPublications
+ORDER BY NumberOfPublications DESC
+LIMIT 15;",0,,false
+Deep traversal,,"PROFILE
+MATCH (target:Author {name: 'Sergey Levine'})-[:WROTE]->(p1:Paper)<-[:WROTE]-(coauthor:Author)-[:WROTE]->(p2:Paper)<-[:WROTE]-(co_coauthor:Author)
+WHERE target <> co_coauthor 
+  AND NOT (target)-[:WROTE]->()<-[:WROTE]-(co_coauthor)
+RETURN DISTINCT co_coauthor.name AS SecondDegreeConnection, count(p2) AS NumberOfCollaborations
+ORDER BY NumberOfCollaborations DESC
+LIMIT 15;",1,,false
+Shortest path,,"PROFILE
+MATCH (start:Author {name: 'Sergey Levine'})
+MATCH (end:Author {name: 'Xi Chen'})
+MATCH path = shortestPath((start)-[:WROTE*..10]-(end))
+RETURN path, length(path) / 2 AS SeparationDegrees;",2,,false
